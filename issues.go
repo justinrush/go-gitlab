@@ -111,6 +111,7 @@ type Issue struct {
 	Links                *IssueLinks      `json:"_links"`
 	IssueLinkID          int              `json:"issue_link_id"`
 	MergeRequestCount    int              `json:"merge_requests_count"`
+	EpicIssueID          int              `json:"epic_issue_id"`
 	TaskCompletionStatus struct {
 		Count          int `json:"count"`
 		CompletedCount int `json:"completed_count"`
@@ -264,37 +265,6 @@ func (s *IssuesService) ListProjectIssues(pid interface{}, opt *ListProjectIssue
 		return nil, nil, err
 	}
 	u := fmt.Sprintf("projects/%s/issues", pathEscape(project))
-
-	req, err := s.client.NewRequest("GET", u, opt, options)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var i []*Issue
-	resp, err := s.client.Do(req, &i)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return i, resp, err
-}
-
-// ListEpicIssues get a list of epic issues.  This function accepts
-// pagination parameters page and per_page to return the list of project issues
-//
-// Gitlab API docs: https://docs.gitlab.com/ee/api/epic_issues.html#list-issues-for-an-epic
-func (s *IssuesService) ListEpicIssues(gid interface{}, eid interface{}, opt *ListOptions, options ...RequestOptionFunc) ([]*Issue, *Response, error) {
-	group, err := parseID(gid)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	epic, err := parseID(eid)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	u := fmt.Sprintf("groups/%s/epics/%s/issues", group, epic)
 
 	req, err := s.client.NewRequest("GET", u, opt, options)
 	if err != nil {
